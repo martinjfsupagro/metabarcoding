@@ -1,0 +1,20 @@
+# remove the folder trimmed from the current directory if it already exists so it avoids mixing runs of the script
+rm -rf ./trimmed/
+# reate a folder named trimmed in the current directory
+mkdir -p ./trimmed/
+# iterate over all the Read 1 files that contain the exetension fastq.gz
+for r1 in *_R1_*.fastq.gz; do
+    # replace _R1_ in the file name with _R2_ : careful, it means you have exactely the paired R1 and R2 files
+    r2=${r1/_R1_/_R2_}
+# for the next command, cutadapt is located in "home/$USER/softwares/". In our case cutadapt is embedded within a singularity container (hence the extension .simg) but it would be the same if it was directly installed on the system
+# -m holds for the minimum size of the read to be retained,
+# -e is the maximum error rate to assign and adapter (1 nucleotide out of 20 for a primer for exemple),
+# --max-n defines the maximum number of "N" for a read to be retained,
+# --discard-untrimmed implies that reads with no detected adapter is removed
+# -g file:forward.fas indicates that the forward adapter (primer here) is looked for nearby the 5' part of R1 reads and the adapter sequences are stored in the forward.fas file in the current folder
+# -G file:reverse.fas indicates that the reverse adapter (primer here) is looked for nearby the 5' part of R2 reads and the adapter sequences are stored in the reverse.fas file in the current folder
+# -n 1 indicates that the search is done once. It may prove useful to repeat the search multiple times if concatemeres of primers can occur.
+# -o allows defining the path to trimmed R1 files
+# -p allows defining the path to trimmed R2 files  	
+/home/$USER/softwares/cutadapt-1.16/cutadapt-1.16.simg -m 100 -e 0.05 --max-n 0 --discard-untrimmed -g file:forward.fas -G file:reverse.fas -n 1 -o ./trimmed/{name}.${r1} -p ./trimmed/{name}.${r2} ${r1} ${r2}
+done
