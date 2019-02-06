@@ -1,3 +1,4 @@
+# This script is used to demultiplex multiple loci amplified for a given sample. In our case a sample is amplified for five loci with five primer pairs but using the same tag combination during the 2-step PCR process. Therefore a given raw reads file corresponds to the five loci. Demultiplexing the loci is needed for further analysis of the data. This is done by using cutadapt to detect the primer pairs and sort the loci.   
 # remove the folder trimmed from the current directory if it already exists so it avoids mixing runs of the script
 rm -rf ./trimmed/
 # reate a folder named trimmed in the current directory
